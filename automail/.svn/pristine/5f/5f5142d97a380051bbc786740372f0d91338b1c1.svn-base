@@ -1,0 +1,155 @@
+package com.bdqn.util;
+import com.bdqn.entity.MailAuthenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
+
+/**
+ * Created by admin on 2017/7/3.
+ */
+public class FileUtil {
+
+    private final static Logger logger = LoggerFactory.getLogger(FileUtil.class);
+    private static MailAuthenticator authenticator = null;
+    private static Transport transport = null;
+
+    /**
+     * 读取邮件配置信息
+     */
+    public static Properties getProperties() {
+        //创建属性文件对象
+        Properties properties = new Properties();
+        //创建一个输入流来读取配置文件
+        InputStream resourceAsStream = null;
+        //获取配置文件
+        try {
+            resourceAsStream = FileUtil.class.getClassLoader().getResourceAsStream("properties/sendMail.properties");
+            properties.load(resourceAsStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //关闭文件流
+            if (resourceAsStream != null) {
+                try {
+                    resourceAsStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return properties;
+    }
+
+    public static Map<String,MimeBodyPart> getFiles() {
+        Map<String,MimeBodyPart> attchs = new HashMap<String,MimeBodyPart>();
+        //创建一个正则匹配
+        String pattern = "\\D*_[1-9]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])";
+        String path = "src/main/resources/upload/";
+        File file = new File(path);
+        File[] tempList = file.listFiles();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String fileName = null;
+        for (int i = 0; i < tempList.length; i++) {
+            if (tempList[i].isFile()) {
+                fileName = tempList[i].getName();
+                String after = fileName.substring(fileName.lastIndexOf("."));
+                fileName = fileName.substring(0, fileName.lastIndexOf('.'));
+                //如果没有时间戳，就加上
+                if (!Pattern.matches(pattern,fileName)){
+                    fileName = fileName +"_"+format.format(new Date()) + after;
+                    File newfile=new File(path+fileName);
+                }else{
+                    fileName = fileName +after;
+                }
+                //创建一个附件
+                MimeBodyPart attach = new MimeBodyPart();
+                DataSource ds = new FileDataSource(tempList[i]);
+                //数据处理器
+                DataHandler dh = new DataHandler(ds);
+                //把文件放入附件中
+                try {
+                    attach.setDataHandler(dh);
+                    try {
+                        attach.setFileName(MimeUtility.encodeWord(fileName));
+                        attchs.put(fileName,attach);
+                    } catch (UnsupportedEncodingException e) {
+                        logger.info("文件名不规范");
+                    }
+
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return attchs;
+    }
+
+    public static void sendMail() {
+        StringBuffer fileSb = new StringBuffer(""); //存储发送文件的文件名
+        //1.获取配置文件,设置相应的服务器，端口等
+        Properties properties = FileUtil.getProperties();
+        properties.put("mail.smtp.host", properties.get("mail.smtp.host"));
+        properties.put("mail.smtp.port", properties.get("mail.smtp.port"));
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.transport.protocol", properties.get("mail.transport.protocol"));
+        properties.put("mail.smtp.ssl.enable", "true");
+        //2.实例化一个身份验证
+        authenticator = new MailAuthenticator(properties.get("sendMailAccount").toString(), properties.get("sendMailPassword").toString());
+        //3.创建一个邮箱会话
+        Session sendMailSession = Session.getInstance(properties, authenticator);
+        sendMailSession.setDebug(true);
+        //4.设置一个发送的信息容器存储信息
+        MimeMessage mailMessage = new MimeMessage(sendMailSession);
+        try {
+            //设置发信人
+            mailMessage.setFrom(new InternetAddress(properties.get("sendMailAccount").toString(), "***"));
+            //设置收信人,Message.RecipientType.TO 收信人，Message.RecipientType.CC抄送人
+            mailMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(properties.get("receiveMailAccount").toString()));
+            //主题
+            mailMessage.setSubject("数据库备份", "UTF-8");
+            //设置邮件发送日期
+            mailMessage.setSentDate(new Date());
+            //5.创建一个容器类
+            Multipart mainPart = new MimeMultipart();
+            //6.创建一个邮件体对象,也就是附件
+            Map<String,MimeBodyPart> files = FileUtil.getFiles();
+            Set<String> strings = files.keySet();
+            StringBuffer sendMailName = new StringBuffer(",发送文件:");
+            for (String fileName : strings) {
+                sendMailName.append(fileName+" ");
+                mainPart.addBodyPart(files.get(fileName));
+                mailMessage.setContent(mainPart);
+            }
+            //8.创建发送器
+            transport = sendMailSession.getTransport();
+            transport.connect(properties.get("sendMailAccount").toString(), properties.get("sendMailPassword").toString());
+            transport.send(mailMessage);
+            //9.存储日志信息
+            logger.info("发送成功！发送信息:" + "发件人:" + properties.get("sendMailAccount").toString() + "，收件人:" + properties.get("receiveMailAccount").toString() + "，发送日期:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+sendMailName.toString());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } finally {
+            if (transport != null) {
+                try {
+                    transport.close();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+}

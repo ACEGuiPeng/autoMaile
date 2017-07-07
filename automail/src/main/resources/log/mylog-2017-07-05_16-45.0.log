@@ -1,0 +1,6 @@
+2017-07-05 16:21:41,057 INFO [main] com.baqn.test.TestMail [null : -1] 0
+2017-07-05 16:24:42,244 INFO [main] com.baqn.test.TestMail [TestMail.java : 19] 0
+2017-07-05 16:25:36,553 INFO [main] com.baqn.test.TestMail [TestMail.java : 19] 2
+2017-07-05 16:25:36,621 INFO [main] com.baqn.test.TestMail [TestMail.java : 21] oa_2017-07-05.sql
+2017-07-05 16:25:36,622 INFO [main] com.baqn.test.TestMail [TestMail.java : 21] website_2017-07-05.sql
+2017-07-05 16:45:18,356 INFO [main] com.baqn.test.TestMail [TestMail.java : 19] smtp.qq.com

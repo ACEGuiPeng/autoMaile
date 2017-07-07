@@ -1,0 +1,14 @@
+package com.baqn.test;
+
+import com.bdqn.entity.MailAuthenticator;
+import com.bdqn.util.FileUtil;
+
+/**
+ * Created by Administrator on 2017/7/3.
+ */
+public class TestSendMail {
+    public static void main(String[] args){
+        MailAuthenticator mailAuthenticator = new MailAuthenticator("460168096@qq.com","lymypyqfblhlbheg");
+        FileUtil.sendMail(mailAuthenticator);
+    }
+}

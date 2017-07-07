@@ -1,0 +1,104 @@
+package com.bdqn.entity;
+
+import com.bdqn.util.SendMail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.internet.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Created by guipeng on 2017/7/5.
+ */
+public class Mail {
+
+    private String sendMailAccount = "ss";//发件人
+    private String receiveMailAccount;//收件人
+    private String subject;//邮件主题
+    private String context;//邮件内容
+    private MimeMessage mailMessage;//发送的信息容器存储信息
+    private Logger logger = LoggerFactory.getLogger(Mail.class);
+
+    public Mail(String sendMailAccount, String receiveMailAccount, String subject, String context,List<File> files) {
+        this.sendMailAccount = sendMailAccount;
+        this.receiveMailAccount = receiveMailAccount;
+        this.subject = subject;
+        this.context = context;
+        setMailMessage(files);
+    }
+
+    public Mail() {}
+
+    public MimeMessage getMailMessage() {
+        return mailMessage;
+    }
+
+    public void setMailMessage(List<File> files) {
+        mailMessage = new MimeMessage(SendMail.getSession());
+        Multipart mainPart = new MimeMultipart("mixed");
+        try {
+            if (files.size() != 0) {
+                for (File file : files) {
+                    MimeBodyPart attach = new MimeBodyPart();
+                    DataSource ds = new FileDataSource(file);
+                    DataHandler dh = new DataHandler(ds);
+                    try{
+                        attach.setDataHandler(dh);
+                        attach.setFileName(MimeUtility.encodeText(file.getName()));
+                        mainPart.addBodyPart(attach);
+                        logger.info("添加附件"+file.getName()+",文件大小："+file.length());
+                    }catch (UnsupportedEncodingException e){
+                        e.getStackTrace();
+                    }
+                }
+            }
+            //设置发信人
+            mailMessage.setFrom(new InternetAddress(sendMailAccount));
+            logger.info("发件人："+sendMailAccount);
+            //设置收信人,Message.RecipientType.TO 收信人，Message.RecipientType.CC抄送人
+            mailMessage.setRecipient(Message.RecipientType.TO,new InternetAddress(receiveMailAccount));
+            logger.info("收件人："+receiveMailAccount);
+            //主题
+            mailMessage.setSubject(subject, "UTF-8");
+            logger.info("邮件主题："+getSubject());
+            //正文
+            /*mailMessage.setContent(context,"text/html;charset=UTF-8");*/
+            MimeBodyPart contents = new MimeBodyPart();
+            MimeMultipart bodyMultipart  = new MimeMultipart("related");
+            MimeBodyPart htmlPart = new MimeBodyPart();
+            htmlPart.setContent(context,"text/html;charset=utf-8");
+            bodyMultipart.addBodyPart(htmlPart);
+            contents.setContent(bodyMultipart);
+            mainPart.addBodyPart(contents);
+            logger.info("邮件正文："+getContext());
+            mailMessage.setContent(mainPart);
+            //设置邮件发送日期
+            mailMessage.setSentDate(new Date());
+            logger.info("发送时间"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            //保存设置
+            mailMessage.saveChanges();
+        } catch (MessagingException e) {
+
+        }
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+
+    public String getContext() {
+        return context;
+    }
+
+}

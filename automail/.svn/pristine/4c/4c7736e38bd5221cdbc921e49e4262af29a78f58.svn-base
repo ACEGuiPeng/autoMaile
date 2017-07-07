@@ -1,0 +1,63 @@
+package com.bdqn.util;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Logger;
+
+/**
+ * Created by admin on 2017/7/3.
+ */
+public class FileUtil {
+
+    private static Logger logger = Logger.getLogger(String.valueOf(FileUtil.class));
+
+    /**
+     * 读取邮件配置信息
+     */
+    public static Properties getProperties(){
+        //创建属性文件对象
+        Properties properties = new Properties();
+        //创建一个输入流来读取配置文件
+        InputStream resourceAsStream = null;
+        //获取配置文件
+        try {
+            resourceAsStream = FileUtil.class.getClassLoader().getResourceAsStream("properties/sendMail.properties");
+            properties.load(resourceAsStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            //关闭文件流
+            if(resourceAsStream!=null){
+                try {
+                    resourceAsStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return properties;
+    }
+
+    public static Map getFiles() {
+        String path="src/main/resources/upload/";
+        File file=new File(path);
+        File[] tempList = file.listFiles();
+        Map<String,File> map=new HashMap<String, File>();
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        String fileName =null;
+        for (int i = 0; i < tempList.length; i++) {
+            fileName = tempList[i].getName();
+            fileName=fileName.substring(0,fileName.lastIndexOf("."))
+                    +format.format(new Date())
+                    +fileName.substring(fileName.lastIndexOf("."));
+            map.put(fileName,tempList[i]);
+        }
+        return map;
+    }
+}

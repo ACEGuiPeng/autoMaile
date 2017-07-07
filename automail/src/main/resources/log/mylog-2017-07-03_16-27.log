@@ -1,0 +1,4 @@
+2017-07-03 16:27:51,441 INFO [main] com.baqn.test.TestMail [TestMail.java : 99] javax.mail.internet.MimeBodyPart@448ff1a8
+2017-07-03 16:27:51,445 INFO [main] com.baqn.test.TestMail [TestMail.java : 99] javax.mail.internet.MimeBodyPart@6ee12bac
+2017-07-03 16:27:51,445 INFO [main] com.baqn.test.TestMail [TestMail.java : 99] javax.mail.internet.MimeBodyPart@55040f2f
+2017-07-03 16:27:51,447 INFO [main] com.baqn.test.TestMail [TestMail.java : 40] {mail.smtp.socketFactory.fallback=false, sendMailAccount=460168096@qq.com, mail.smtp.socketFactory.class=javax.net.ssl.SSLSocketFactory, mail.transport.protocol=smtp, mail.smtp.host=smtp.qq.com, receiveMailAccount=guipeng8789502@163.com, mail.smtp.port=465, mail.smtp.auth=true;, sendMailPassword=lymypyqfblhlbheg, mail.smtp.socketFactory.port=smtpPort}

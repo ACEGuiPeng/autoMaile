@@ -1,0 +1,1 @@
+2017-07-04 14:11:28,517 INFO [main] com.bdqn.service.Mail [Mail.java : 71] 发送成功！发送信息:发件人:460168096@qq.com，收件人:guipeng8789502@163.com，发送日期:2017-07-04 14:11:28,发送文件:student_2017-07-04.sql myStudent_2017-07-04.sql 

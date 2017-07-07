@@ -1,0 +1,91 @@
+package com.bdqn.service;
+
+import com.bdqn.entity.MailAuthenticator;
+import com.bdqn.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+/**
+ * 邮件类，处理邮件
+ * Created by guipeng on 2017/7/4.
+ */
+public class Mail {
+    private Logger logger = LoggerFactory.getLogger(Mail.class);
+    private MailAuthenticator authenticator = null;
+    private Transport transport = null;
+
+    public void sendMail() {
+        StringBuffer fileSb = new StringBuffer(""); //存储发送文件的文件名
+        //1.获取配置文件,设置相应的服务器，端口等
+        Properties properties = FileUtil.getProperties();
+        properties.put("mail.smtp.host", properties.get("mail.smtp.host"));
+        properties.put("mail.smtp.port", properties.get("mail.smtp.port"));
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.transport.protocol", properties.get("mail.transport.protocol"));
+        properties.put("mail.smtp.ssl.enable", "true");
+        //2.实例化一个身份验证
+        authenticator = new MailAuthenticator(properties.get("sendMailAccount").toString(), properties.get("sendMailPassword").toString());
+        //3.创建一个邮箱会话
+        Session sendMailSession = Session.getInstance(properties, authenticator);
+        sendMailSession.setDebug(true);
+        //4.设置一个发送的信息容器存储信息
+        MimeMessage mailMessage = new MimeMessage(sendMailSession);
+        try {
+            //设置发信人
+            mailMessage.setFrom(new InternetAddress(properties.get("sendMailAccount").toString(), "***"));
+            //设置收信人,Message.RecipientType.TO 收信人，Message.RecipientType.CC抄送人
+            mailMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(properties.get("receiveMailAccount").toString()));
+            //主题
+            mailMessage.setSubject("数据库备份", "UTF-8");
+            //设置邮件发送日期
+            mailMessage.setSentDate(new Date());
+            //5.创建一个容器类
+            Multipart mainPart = new MimeMultipart();
+            //6.创建一个邮件体对象,也就是附件
+            Map<String, MimeBodyPart> files = FileUtil.getFiles();
+            if (files.size()!=0) {
+                Set<String> strings = files.keySet();
+                StringBuffer sendMailName = new StringBuffer(",发送文件:");
+                for (String fileName : strings) {
+                    sendMailName.append(fileName + " ");
+                    mainPart.addBodyPart(files.get(fileName));
+                    mailMessage.setContent(mainPart);
+                }
+                //8.创建发送器
+                transport = sendMailSession.getTransport();
+                transport.connect(properties.get("sendMailAccount").toString(), properties.get("sendMailPassword").toString());
+                transport.send(mailMessage);
+                //9.存储日志信息
+                logger.info("发送成功！发送信息:" + "发件人:" + properties.get("sendMailAccount").toString() + "，收件人:" + properties.get("receiveMailAccount").toString() + "，发送日期:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + sendMailName.toString());
+            } else {
+                logger.info("发送失败！没有更新的备份文件");
+            }
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            logger.info("发送失败！" + e.getMessage());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            logger.info("发送失败！" + e.getMessage());
+        } finally {
+            if (transport != null) {
+                try {
+                    transport.close();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}

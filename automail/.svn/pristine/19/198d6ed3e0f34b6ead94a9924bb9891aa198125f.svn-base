@@ -1,0 +1,23 @@
+package com.baqn.test;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Created by Administrator on 2017/7/3.
+ */
+public class TestSendMail {
+
+    private final static Logger logger = LoggerFactory.getLogger(TestMail.class);
+
+    public static void main(String[] args){
+        AutoMail autoMail = new SendMail2();
+        try {
+            autoMail.sendMail();
+        } catch (Exception e) {
+
+           logger.debug(e.getMessage());
+        }
+
+    }
+}

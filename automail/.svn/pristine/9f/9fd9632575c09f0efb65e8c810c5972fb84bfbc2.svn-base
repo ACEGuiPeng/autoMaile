@@ -1,0 +1,26 @@
+#email Configuration
+#邮箱服务器#
+mail.smtp.host=smtp.qq.com
+#是否需要登录验证
+mail.smtp.auth = true;
+#使用协议(JavaMail规范要求)
+mail.transport.protocol = smtp
+
+#发件人信息
+#发件人邮箱地址#
+sendMailAccount=460168096@qq.com
+#发件人密码(授权码)
+sendMailPassword=lymypyqfblhlbheg
+
+#收件人信息
+receiveMailAccount=guipeng8789502@163.com
+
+#SSL安全认证部分
+#邮箱服务器端口#
+mail.smtp.port=465
+
+#备份文件所在文件夹
+#注意：如果有需要多个文件需要备份，文件夹路径之后请以，结尾,例:D:/Computer_Scientist_Tools/All Projects/,D:/vipInfomation/6.武汉宏鹏/项目组/
+#文件保存形式请以 文件名_yyyy-MM-hh 的形式保存
+backupFilePath=D:/vipInfomation/test/BAK1/oa_{yyyy-MM-hh},D:/vipInfomation/test/BAK2/website_{yyyy-MM-hh}
+

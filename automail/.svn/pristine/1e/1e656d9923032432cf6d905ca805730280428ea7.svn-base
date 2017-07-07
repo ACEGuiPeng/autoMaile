@@ -1,0 +1,21 @@
+package com.baqn.test;
+
+import com.bdqn.util.AutoMail;
+import com.bdqn.util.SendMail2;
+
+/**
+ * Created by Administrator on 2017/7/3.
+ */
+public class TestSendMail {
+
+    public static void main(String[] args){
+        AutoMail autoMail = new SendMail2();
+        try {
+            autoMail.sendMail();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+    }
+}

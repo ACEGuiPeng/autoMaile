@@ -1,0 +1,27 @@
+#email Configuration
+#邮箱服务器#
+mail.smtp.host=smtp.qq.com
+#是否需要登录验证
+mail.smtp.auth = true;
+#使用协议(JavaMail规范要求)
+mail.transport.protocol = smtp
+
+#发件人信息
+#发件人邮箱地址#
+sendMailAccount=460168096@qq.com
+#发件人密码(授权码)
+sendMailPassword=lymypyqfblhlbheg
+
+#收件人信息
+#发件人邮箱地址#
+receiveMailAccount=guipeng8789502@163.com
+
+#SSL安全认证部分
+#邮箱服务器端口#
+mail.smtp.port=465
+
+mail.smtp.socketFactory.class = javax.net.ssl.SSLSocketFactory
+
+mail.smtp.socketFactory.fallback=false
+
+mail.smtp.socketFactory.port=smtpPort

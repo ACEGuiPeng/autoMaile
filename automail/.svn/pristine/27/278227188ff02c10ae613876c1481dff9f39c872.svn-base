@@ -1,0 +1,11 @@
+#email Configuration
+#邮箱服务器#
+mail.smtp.host=smtp.qq.com
+#邮箱服务器端口#
+mail.smtp.port=465
+#发件人邮箱地址#
+username=739312906@qq.com
+#your email password#
+password=ltqckibgyupcbcgf
+#收邮件的协议
+mail.transport.protocol=smtp

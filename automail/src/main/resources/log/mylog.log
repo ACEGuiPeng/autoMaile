@@ -1,0 +1,16 @@
+2017-07-06 16:52:28,087 INFO [main] com.bdqn.entity.Mail [Mail.java : 59] 添加附件oa_2017-07-06.sql,文件大小：0
+2017-07-06 16:52:28,153 INFO [main] com.bdqn.entity.Mail [Mail.java : 59] 添加附件website_2017-07-06.sql,文件大小：0
+2017-07-06 16:52:28,154 INFO [main] com.bdqn.entity.Mail [Mail.java : 67] 发件人：460168096@qq.com
+2017-07-06 16:52:28,155 INFO [main] com.bdqn.entity.Mail [Mail.java : 70] 收件人：guipeng8789502@163.com
+2017-07-06 16:52:28,156 INFO [main] com.bdqn.entity.Mail [Mail.java : 73] 邮件主题：数据备份
+2017-07-06 16:52:28,156 INFO [main] com.bdqn.entity.Mail [Mail.java : 83] 邮件正文：website数据库备份,oa数据库备份
+2017-07-06 16:52:28,156 INFO [main] com.bdqn.entity.Mail [Mail.java : 87] 发送时间2017-07-06 16:52:28
+2017-07-06 16:52:29,512 INFO [main] com.bdqn.service.MailService [MailService.java : 25] 邮件发送成功!
+2017-07-06 16:52:49,997 INFO [main] com.bdqn.entity.Mail [Mail.java : 59] 添加附件oa_2017-07-06.sql,文件大小：0
+2017-07-06 16:52:50,001 INFO [main] com.bdqn.entity.Mail [Mail.java : 59] 添加附件website_2017-07-06.sql,文件大小：0
+2017-07-06 16:52:50,002 INFO [main] com.bdqn.entity.Mail [Mail.java : 67] 发件人：460168096@qq.com
+2017-07-06 16:52:50,003 INFO [main] com.bdqn.entity.Mail [Mail.java : 70] 收件人：guipeng8789502@163.com
+2017-07-06 16:52:50,003 INFO [main] com.bdqn.entity.Mail [Mail.java : 73] 邮件主题：数据备份
+2017-07-06 16:52:50,004 INFO [main] com.bdqn.entity.Mail [Mail.java : 83] 邮件正文：website数据库备份,oa数据库备份
+2017-07-06 16:52:50,004 INFO [main] com.bdqn.entity.Mail [Mail.java : 87] 发送时间2017-07-06 16:52:50
+2017-07-06 16:52:51,349 INFO [main] com.bdqn.service.MailService [MailService.java : 25] 邮件发送成功!

@@ -1,0 +1,94 @@
+package com.bdqn.util;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.Logger;
+
+/**
+ * Created by admin on 2017/7/3.
+ */
+public class FileUtil {
+
+
+
+
+
+    private static Logger logger = Logger.getLogger(String.valueOf(FileUtil.class));
+
+    /**
+     * 读取邮件配置信息
+     */
+    public static Properties getProperties(){
+        //创建属性文件对象
+        Properties properties = new Properties();
+        //创建一个输入流来读取配置文件
+        InputStream resourceAsStream = null;
+        //获取配置文件
+        try {
+            resourceAsStream = FileUtil.class.getClassLoader().getResourceAsStream("properties/sendMail.properties");
+            properties.load(resourceAsStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            //关闭文件流
+            if(resourceAsStream!=null){
+                try {
+                    resourceAsStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return properties;
+    }
+
+    public static List<MimeBodyPart> getFiles() {
+        List<MimeBodyPart>  attchs = new ArrayList<MimeBodyPart>();
+
+        String path="src/main/resources/upload/";
+        File file=new File(path);
+        logger.info(file.getAbsolutePath());
+        File[] tempList = file.listFiles();
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        String fileName =null;
+        for (int i = 0; i < tempList.length; i++) {
+            if (tempList[i].isFile()){
+                fileName = tempList[i].getName();
+                String after=fileName.substring(fileName.lastIndexOf("."));
+                if (fileName.lastIndexOf(".")-fileName.lastIndexOf("_")==11){
+                    fileName=fileName.substring(0,fileName.lastIndexOf("_"));
+                }else {
+                    fileName=fileName.substring(0,fileName.lastIndexOf("."));
+                }
+                fileName=fileName +"_"+format.format(new Date()) +after;
+                tempList[i].renameTo(new File(path+fileName));
+                //创建一个附件
+                MimeBodyPart attach = new MimeBodyPart();
+                DataSource ds = new FileDataSource(tempList[i]);
+                //数据处理器
+                DataHandler dh = new DataHandler(ds);
+                //把文件放入附件中
+                try {
+                    attach.setDataHandler(dh);
+                    attach.setFileName(fileName);
+                    attchs.add(attach);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return attchs;
+    }
+
+    public static void sendmail(){
+
+    }
+}

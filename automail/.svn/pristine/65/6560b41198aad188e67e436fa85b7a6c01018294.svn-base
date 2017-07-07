@@ -1,0 +1,14 @@
+package com.baqn.test;
+
+import com.bdqn.util.FileUtil;
+
+/**
+ * Created by Administrator on 2017/7/3.
+ */
+public class TestSendMail {
+
+
+    public static void main(String[] args){
+        FileUtil.sendMail();
+    }
+}
